@@ -23,15 +23,72 @@
       --radius: 16px;
       --shadow: 0 8px 24px rgba(3,7,18,.06);
     }
+    
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      :root {
+        --border: #333;
+        --ink-muted: #000;
+        --bg: #fff;
+      }
+    }
+    
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body{
       margin:0; background:var(--bg); color:var(--ink);
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      line-height:1.4;
+      line-height:1.6;
+      font-size: 18px; /* Larger base font size for accessibility */
     }
-    a{ color:var(--primary); text-decoration:none; }
-    a:hover{ text-decoration:underline; }
+    
+    /* Virtual magnifying glass styles */
+    #magnifier {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      font-size: 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #magnifier:hover {
+      background: #1540c7;
+      transform: scale(1.05);
+    }
+    
+    body.magnified {
+      font-size: 22px;
+    }
+    
+    body.magnified .card {
+      transform: scale(1.1);
+      margin: 20px 0;
+    }
+    
+    a{ color:var(--primary); text-decoration:underline; font-weight: 600; }
+    a:hover{ text-decoration:none; background-color: rgba(28, 78, 216, 0.1); }
+    a:focus { outline: 3px solid var(--primary); outline-offset: 2px; }
+    
     header{
       background:linear-gradient(180deg, #1e3a8a 0%, #1d4ed8 100%);
       color: #e5e7eb;
@@ -47,45 +104,57 @@
       position: relative; top:-88px; margin-bottom:-72px;
     }
     .card{
-      background:var(--card); border:1px solid var(--border); border-radius: var(--radius);
+      background:var(--card); border:2px solid var(--border); border-radius: var(--radius);
       box-shadow: var(--shadow); overflow:hidden;
     }
 
     .steps{ display:grid; grid-template-columns: 1fr; }
-    .steps-head{ display:flex; gap:8px; padding: 12px; overflow:auto; background:#f1f5f9; border-bottom:1px solid var(--border); }
-    .chip{ white-space:nowrap; padding:10px 14px; border-radius:999px; border:1px solid var(--border); background:#fff; color:var(--ink-muted); font-weight:600; font-size:.9rem; }
-    .chip.active{ background:var(--primary); color:var(--primary-ink); border-color:transparent; }
-    .chip.done{ background:#e8f5ee; color:#065f46; border-color:#c7ead6; }
+    .steps-head{ display:flex; gap:8px; padding: 12px; overflow:auto; background:#f1f5f9; border-bottom:2px solid var(--border); }
+    .chip{ 
+      white-space:nowrap; padding:12px 16px; border-radius:999px; border:2px solid var(--border); 
+      background:#fff; color:var(--ink-muted); font-weight:600; font-size:1rem; 
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .chip:hover { background: #f8f9fa; }
+    .chip:focus { outline: 3px solid var(--primary); outline-offset: 2px; }
+    .chip.active{ background:var(--primary); color:var(--primary-ink); border-color:var(--primary); }
+    .chip.done{ background:#e8f5ee; color:#065f46; border-color:#16a34a; }
 
-    .steps-body{ padding: 16px; }
-    .grid{ display:grid; gap:14px; }
+    .steps-body{ padding: 20px; }
+    .grid{ display:grid; gap:16px; }
     @media (min-width: 720px){ .grid.cols-2{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
     form{ display:block; }
-    fieldset{ border:1px solid var(--border); border-radius:12px; padding:16px; }
-    legend{ padding:0 8px; font-weight:700; color:#111827; }
-    label{ display:block; font-weight:600; font-size:.95rem; margin:.25rem 0 .35rem; color:#111827; }
+    fieldset{ border:2px solid var(--border); border-radius:12px; padding:20px; margin-bottom: 20px; }
+    legend{ padding:0 12px; font-weight:700; color:#111827; font-size: 1.1rem; }
+    label{ display:block; font-weight:600; font-size:1rem; margin:.5rem 0 .5rem; color:#111827; }
 
-    input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], select, textarea{
-      width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:#fff; color:var(--ink);
+    input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], input[type="file"], select, textarea{
+      width:100%; padding:14px 16px; border-radius:12px; border:2px solid var(--border); background:#fff; color:var(--ink);
       outline: none; transition: box-shadow .15s ease, border-color .15s ease;
+      font-size: 1rem;
     }
-    textarea{ min-height: 110px; resize: vertical; }
-    input:focus, select:focus, textarea:focus{ border-color: var(--primary); box-shadow: 0 0 0 6px var(--ring); }
+    
+    textarea{ min-height: 120px; resize: vertical; }
+    input:focus, select:focus, textarea:focus{ 
+      border-color: var(--primary); 
+      box-shadow: 0 0 0 4px var(--ring); 
+    }
 
-    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .hint{ color:var(--ink-muted); font-size:.9rem; }
+    .row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .hint{ color:var(--ink-muted); font-size:1rem; line-height: 1.5; margin-top: 8px; }
     .req{ color:var(--error); font-weight:700; margin-left:6px; }
 
-    .actions{ display:flex; justify-content:space-between; gap:12px; margin-top:16px; }
+    .actions{ display:flex; justify-content:space-between; gap:16px; margin-top:24px; }
     .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:#fff; font-weight:700; cursor:pointer;
-      text-decoration:none; color:var(--ink);
+      display:inline-flex; align-items:center; justify-content:center; gap:12px;
+      padding:14px 20px; border-radius:12px; border:2px solid var(--border); background:#fff; font-weight:700; cursor:pointer;
+      text-decoration:none; color:var(--ink); font-size: 1rem; min-height: 48px;
     }
-    .btn.primary{ background:var(--primary); color:var(--primary-ink); border-color:transparent; }
+    .btn:focus { outline: 3px solid var(--primary); outline-offset: 2px; }
+    .btn.primary{ background:var(--primary); color:var(--primary-ink); border-color:var(--primary); }
     .btn.ghost{ background:transparent; }
-    .btn.success{ background:var(--accent); color:#fff; border-color:transparent; }
+    .btn.success{ background:var(--accent); color:#fff; border-color:var(--accent); }
 
     .nav{ display:none; }
     .panel{ display:none; }
@@ -93,7 +162,7 @@
     #step2:checked ~ .steps .chip[data-for="2"],
     #step3:checked ~ .steps .chip[data-for="3"],
     #step4:checked ~ .steps .chip[data-for="4"],
-    #step5:checked ~ .steps .chip[data-for="5"]{ color:#fff; background:var(--primary); }
+    #step5:checked ~ .steps .chip[data-for="5"]{ color:#fff; background:var(--primary); border-color:var(--primary); }
 
     #step1:checked ~ .steps .panel[data-step="1"],
     #step2:checked ~ .steps .panel[data-step="2"],
@@ -103,28 +172,124 @@
 
     .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
 
-    footer{ color:var(--ink-muted); font-size:.9rem; padding:24px 0 64px; }
+    footer{ color:var(--ink-muted); font-size:1rem; padding:24px 0 64px; }
+
+    /* Form completion guidance */
+    .completion-guide {
+      background: #eff6ff;
+      border: 2px solid #3b82f6;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .completion-guide h3 {
+      margin: 0 0 12px 0;
+      color: #1e40af;
+      font-size: 1.1rem;
+    }
+    .completion-guide ul {
+      margin: 0;
+      padding-left: 24px;
+    }
+    .completion-guide li {
+      margin: 8px 0;
+      color: #1e40af;
+    }
+
+    /* Definition tooltips */
+    .definition {
+      position: relative;
+      display: inline-block;
+      border-bottom: 2px dotted var(--primary);
+      cursor: help;
+    }
+    
+    .definition .tooltip {
+      visibility: hidden;
+      width: 300px;
+      background-color: var(--ink);
+      color: #fff;
+      text-align: left;
+      border-radius: 6px;
+      padding: 12px;
+      position: absolute;
+      z-index: 1000;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -150px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      box-shadow: var(--shadow);
+    }
+    
+    .definition:hover .tooltip,
+    .definition:focus .tooltip {
+      visibility: visible;
+    }
+
+    /* Alert styles */
+    .alert {
+      padding: 16px;
+      border-radius: 12px;
+      margin: 16px 0;
+      font-weight: 600;
+    }
+    .alert.warning {
+      background: #fef3c7;
+      color: #92400e;
+      border: 2px solid #f59e0b;
+    }
+    .alert.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 2px solid #ef4444;
+    }
+
+    /* File upload enhancements */
+    .file-info {
+      background: #f0f9ff;
+      border: 2px solid #0ea5e9;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+    .file-info h4 {
+      margin: 0 0 12px 0;
+      color: #0c4a6e;
+    }
+    .file-examples {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .file-examples span {
+      background: #e0f2fe;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: #0c4a6e;
+    }
 
     /* === Helpful Resources styles === */
     .resources.card{ margin-top: 24px; }
     .resources .header{
-      display:flex; align-items:center; gap:10px; padding:16px; border-bottom:1px solid var(--border); background:#f8fafc;
+      display:flex; align-items:center; gap:12px; padding:20px; border-bottom:2px solid var(--border); background:#f8fafc;
     }
-    .resources .header h2{ margin:0; font-size:1.05rem; }
-    .link-list{ list-style:none; padding:12px 16px 16px; margin:0; display:grid; gap:8px; }
+    .resources .header h2{ margin:0; font-size:1.2rem; }
+    .link-list{ list-style:none; padding:16px 20px 20px; margin:0; display:grid; gap:12px; }
     .link-item{
-      display:flex; align-items:flex-start; gap:12px; padding:10px 12px; border:1px solid var(--border);
+      display:flex; align-items:flex-start; gap:16px; padding:16px; border:2px solid var(--border);
       border-radius:12px; background:#fff;
     }
     .link-item:hover{ box-shadow: var(--shadow); }
     .icon{
-      width:28px; height:28px; border-radius:8px; display:grid; place-items:center;
-      background:#eef2ff; flex:0 0 28px; border:1px solid #e0e7ff;
+      width:32px; height:32px; border-radius:8px; display:grid; place-items:center;
+      background:#eef2ff; flex:0 0 32px; border:2px solid #e0e7ff;
     }
-    .link-meta{ line-height:1.3; }
+    .link-meta{ line-height:1.4; }
     .link-meta a{ font-weight:700; }
-    .link-meta .sub{ display:block; font-size:.9rem; color:var(--ink-muted); margin-top:2px; }
-    .ext{ margin-left:6px; }
+    .link-meta .sub{ display:block; font-size:1rem; color:var(--ink-muted); margin-top:4px; }
+    .ext{ margin-left:8px; }
     
     @media print{
       header{ display:none; }
@@ -132,12 +297,16 @@
       .steps-head{ display:none; }
       .panel{ display:block !important; page-break-inside: avoid; }
       .actions{ display:none; }
-      body{ background:#fff; }
+      body{ background:#fff; font-size: 14pt; }
       .card{ border:none; box-shadow:none; }
+      #magnifier{ display:none; }
     }
   </style>
 </head>
 <body>
+  <!-- Virtual Magnifying Glass -->
+  <button id="magnifier" title="Toggle text magnification for better visibility" aria-label="Toggle text magnification">🔍</button>
+
   <header role="banner">
     <div class="container brand" aria-label="Missouri Medicaid">
       <div class="seal" aria-hidden="true">MO</div>
@@ -157,24 +326,34 @@
     <input id="step5" class="nav" type="radio" name="step">
 
     <section class="card steps" aria-label="Employment Verification Form">
-      <div class="steps">
-        <label class="chip" data-for="1" for="step1">1 · Applicant</label>
-        <label class="chip" data-for="2" for="step2">2 · Employment</label>
-        <label class="chip" data-for="3" for="step3">3 · Employer</label>
-        <label class="chip" data-for="4" for="step4">4 · Documents</label>
-        <label class="chip" data-for="5" for="step5">5 · Authorization</label>
+      <div class="steps-head">
+        <label class="chip" data-for="1" for="step1" tabindex="0">1 · Applicant</label>
+        <label class="chip" data-for="2" for="step2" tabindex="0">2 · Employment</label>
+        <label class="chip" data-for="3" for="step3" tabindex="0">3 · Employer</label>
+        <label class="chip" data-for="4" for="step4" tabindex="0">4 · Documents</label>
+        <label class="chip" data-for="5" for="step5" tabindex="0">5 · Authorization</label>
       </div>
 
       <div class="steps-body">
         <form action="#" method="post">
           <!-- Step 1 -->
           <section id="panel1" class="panel" data-step="1" role="tabpanel" aria-labelledby="step1">
+            <div class="completion-guide">
+              <h3>Who Completes This Section?</h3>
+              <ul>
+                <li><strong>Applicant</strong> - Fill out your personal information</li>
+                <li><strong>Authorized Representative</strong> - If completing on behalf of applicant, you may fill this out</li>
+                <li><strong>All fields marked with * are required</strong></li>
+              </ul>
+            </div>
+
             <fieldset>
               <legend>Applicant Information</legend>
               <div class="grid cols-2">
                 <div>
                   <label for="firstName">First name<span class="req" aria-hidden="true">*</span></label>
-                  <input id="firstName" name="firstName" type="text" required autocomplete="given-name" />
+                  <input id="firstName" name="firstName" type="text" required autocomplete="given-name" aria-describedby="firstNameHelp" />
+                  <div id="firstNameHelp" class="hint">Enter your legal first name as it appears on official documents</div>
                 </div>
                 <div>
                   <label for="lastName">Last name<span class="req" aria-hidden="true">*</span></label>
@@ -185,19 +364,32 @@
                   <input id="dob" name="dob" type="date" required />
                 </div>
                 <div>
-                  <label for="ssn">SSN (last 4 digits)<span class="req" aria-hidden="true">*</span></label>
-                  <input id="ssn" name="ssn" type="text" inputmode="numeric" pattern="\\d{4}" placeholder="1234" aria-describedby="ssnHelp" required />
-                  <div id="ssnHelp" class="hint">Only the last 4 digits are requested.</div>
+                  <label for="idType">Primary ID Type<span class="req" aria-hidden="true">*</span></label>
+                  <select id="idType" name="idType" required aria-describedby="idTypeHelp">
+                    <option value="" disabled selected>Select ID type</option>
+                    <option value="ssn">Social Security Number</option>
+                    <option value="itin">Individual Taxpayer Identification Number (ITIN)</option>
+                    <option value="alien">Alien Registration Number</option>
+                    <option value="medicaid">Medicaid ID Number</option>
+                    <option value="other">Other Government-Issued ID</option>
+                  </select>
+                  <div id="idTypeHelp" class="hint">Choose the primary form of identification you have available</div>
+                </div>
+                <div>
+                  <label for="idNumber">ID Number (last 4 digits)<span class="req" aria-hidden="true">*</span></label>
+                  <input id="idNumber" name="idNumber" type="text" inputmode="numeric" pattern="\\d{4}" placeholder="1234" aria-describedby="idNumberHelp" required />
+                  <div id="idNumberHelp" class="hint">Only the last 4 digits are requested for privacy protection.</div>
                 </div>
                 <div>
                   <label for="email">Email</label>
-                  <input id="email" name="email" type="email" autocomplete="email" />
+                  <input id="email" name="email" type="email" autocomplete="email" aria-describedby="emailHelp" />
+                  <div id="emailHelp" class="hint">Optional - We'll use this to send updates about your application</div>
                 </div>
                 <div>
                   <label for="phone">Phone<span class="req" aria-hidden="true">*</span></label>
                   <input id="phone" name="phone" type="tel" required placeholder="(555) 555-5555" autocomplete="tel" />
                 </div>
-                <div class="cols-2" style="grid-column:1/-1">
+                <div style="grid-column:1/-1">
                   <label for="address">Home address<span class="req" aria-hidden="true">*</span></label>
                   <input id="address" name="address" type="text" required autocomplete="street-address" />
                 </div>
@@ -208,17 +400,9 @@
                 <div>
                   <label for="state">State<span class="req" aria-hidden="true">*</span></label>
                   <select id="state" name="state" required>
-                    <option value="" selected disabled>Select a state</option>
-                    <option value="MO">Missouri</option>
-                    <option value="IL">Illinois</option>
-                    <option value="KS">Kansas</option>
-                    <option value="AR">Arkansas</option>
-                    <option value="IA">Iowa</option>
-                    <option value="NE">Nebraska</option>
-                    <option value="OK">Oklahoma</option>
-                    <option value="TN">Tennessee</option>
-                    <option value="KY">Kentucky</option>
+                    <option value="MO" selected>Missouri</option>
                   </select>
+                  <div class="hint">Missouri residents only - this form is for Missouri Medicaid</div>
                 </div>
                 <div>
                   <label for="zip">ZIP code<span class="req" aria-hidden="true">*</span></label>
@@ -228,7 +412,7 @@
             </fieldset>
 
             <div class="actions">
-              <span class="hint">Fields marked * are required.</span>
+              <div class="hint">Fields marked with <span class="req">*</span> are required. Need help? Call (855) 373-4636</div>
               <div class="row">
                 <label for="step2" class="btn primary" role="button">Continue to Employment →</label>
               </div>
@@ -237,6 +421,15 @@
 
           <!-- Step 2 -->
           <section id="panel2" class="panel" data-step="2" role="tabpanel" aria-labelledby="step2">
+            <div class="completion-guide">
+              <h3>Who Completes This Section?</h3>
+              <ul>
+                <li><strong>Applicant</strong> - Provide details about your current employment status</li>
+                <li><strong>Multiple Jobs?</strong> Focus on your primary job, note others in the comments</li>
+                <li><strong>Self-Employed?</strong> Provide your business information and average income</li>
+              </ul>
+            </div>
+
             <fieldset>
               <legend>Employment Details</legend>
               <div class="grid cols-2">
@@ -244,43 +437,48 @@
                   <label for="employmentStatus">Current status<span class="req">*</span></label>
                   <select id="employmentStatus" name="employmentStatus" required>
                     <option value="" disabled selected>Select status</option>
-                    <option>Full-time</option>
-                    <option>Part-time</option>
-                    <option>Self-employed</option>
-                    <option>Seasonal/Temporary</option>
-                    <option>Unemployed</option>
+                    <option value="full-time">Full-time (32+ hours/week)</option>
+                    <option value="part-time">Part-time (Less than 32 hours/week)</option>
+                    <option value="self-employed">Self-employed</option>
+                    <option value="seasonal">Seasonal/Temporary</option>
+                    <option value="unemployed">Unemployed</option>
                   </select>
                 </div>
                 <div>
                   <label for="startDate">Start date</label>
-                  <input id="startDate" name="startDate" type="date" />
+                  <input id="startDate" name="startDate" type="date" aria-describedby="startDateHelp" />
+                  <div id="startDateHelp" class="hint">When did you start this job?</div>
                 </div>
                 <div>
                   <label for="hours">Average hours per week</label>
-                  <input id="hours" name="hours" type="number" min="0" max="80" step="1" />
+                  <input id="hours" name="hours" type="number" min="0" max="80" step="1" aria-describedby="hoursHelp" />
+                  <div id="hoursHelp" class="hint">Typical number of hours you work each week</div>
                 </div>
                 <div>
                   <label for="payFrequency">Pay frequency<span class="req">*</span></label>
                   <select id="payFrequency" name="payFrequency" required>
                     <option value="" disabled selected>Select frequency</option>
-                    <option>Weekly</option>
-                    <option>Biweekly</option>
-                    <option>Semimonthly</option>
-                    <option>Monthly</option>
-                    <option>Irregular</option>
+                    <option value="weekly">Weekly (52 times/year)</option>
+                    <option value="biweekly">Biweekly (26 times/year)</option>
+                    <option value="semimonthly">Semimonthly (24 times/year)</option>
+                    <option value="monthly">Monthly (12 times/year)</option>
+                    <option value="irregular">Irregular/Varies</option>
                   </select>
                 </div>
                 <div>
                   <label for="wage">Hourly wage or salary (USD)</label>
-                  <input id="wage" name="wage" type="number" min="0" step="0.01" placeholder="e.g., 15.50" />
+                  <input id="wage" name="wage" type="number" min="0" step="0.01" placeholder="e.g., 15.50" aria-describedby="wageHelp" />
+                  <div id="wageHelp" class="hint">Enter hourly rate OR annual salary amount</div>
                 </div>
                 <div>
                   <label for="tips">Average tips/bonuses (per pay period)</label>
-                  <input id="tips" name="tips" type="number" min="0" step="0.01" />
+                  <input id="tips" name="tips" type="number" min="0" step="0.01" aria-describedby="tipsHelp" />
+                  <div id="tipsHelp" class="hint">Include commission, tips, or irregular bonuses</div>
                 </div>
-                <div class="cols-2" style="grid-column:1/-1">
-                  <label for="notes">Notes (schedule, multiple jobs, recent changes)</label>
-                  <textarea id="notes" name="notes" placeholder="Share any details that help verify your current employment."></textarea>
+                <div style="grid-column:1/-1">
+                  <label for="notes">Additional Employment Notes</label>
+                  <textarea id="notes" name="notes" placeholder="Include details about: multiple jobs, irregular schedule, recent employment changes, seasonal work patterns, or anything else that helps verify your employment situation." aria-describedby="notesHelp"></textarea>
+                  <div id="notesHelp" class="hint">This information helps our team better understand your employment situation</div>
                 </div>
               </div>
             </fieldset>
@@ -293,20 +491,32 @@
 
           <!-- Step 3 -->
           <section id="panel3" class="panel" data-step="3" role="tabpanel" aria-labelledby="step3">
+            <div class="completion-guide">
+              <h3>Who Completes This Section?</h3>
+              <ul>
+                <li><strong>Applicant</strong> - Provide your employer's contact information</li>
+                <li><strong>HR Contact</strong> - Person who can verify your employment</li>
+                <li><strong>Self-Employed?</strong> Use your business information and accountant/CPA if applicable</li>
+              </ul>
+            </div>
+
             <fieldset>
               <legend>Employer Contact Information</legend>
               <div class="grid cols-2">
                 <div>
                   <label for="employerName">Employer name<span class="req">*</span></label>
-                  <input id="employerName" name="employerName" type="text" required />
+                  <input id="employerName" name="employerName" type="text" required aria-describedby="employerNameHelp" />
+                  <div id="employerNameHelp" class="hint">Official business name (for self-employed, use your business name)</div>
                 </div>
                 <div>
                   <label for="ein">Employer EIN (optional)</label>
-                  <input id="ein" name="ein" type="text" inputmode="numeric" pattern="[0-9\\-]{2,10}" placeholder="12-3456789" />
+                  <input id="ein" name="ein" type="text" inputmode="numeric" pattern="[0-9\\-]{2,10}" placeholder="12-3456789" aria-describedby="einHelp" />
+                  <div id="einHelp" class="hint">Federal tax ID number - found on tax documents or W-2</div>
                 </div>
-                <div class="cols-2" style="grid-column:1/-1">
+                <div style="grid-column:1/-1">
                   <label for="empAddress">Employer address</label>
-                  <input id="empAddress" name="empAddress" type="text" />
+                  <input id="empAddress" name="empAddress" type="text" aria-describedby="empAddressHelp" />
+                  <div id="empAddressHelp" class="hint">Main business address or HR department location</div>
                 </div>
                 <div>
                   <label for="empCity">City</label>
@@ -333,7 +543,8 @@
                 </div>
                 <div>
                   <label for="hrName">HR/Verifier name</label>
-                  <input id="hrName" name="hrName" type="text" />
+                  <input id="hrName" name="hrName" type="text" aria-describedby="hrNameHelp" />
+                  <div id="hrNameHelp" class="hint">Person who can verify your employment (manager, HR, payroll)</div>
                 </div>
                 <div>
                   <label for="hrPhone">HR phone</label>
@@ -354,19 +565,49 @@
 
           <!-- Step 4 -->
           <section id="panel4" class="panel" data-step="4" role="tabpanel" aria-labelledby="step4">
+            <div class="completion-guide">
+              <h3>Who Completes This Section?</h3>
+              <ul>
+                <li><strong>Applicant</strong> - Upload or describe employment verification documents</li>
+                <li><strong>Photo uploads accepted</strong> - You can take photos of documents with your phone</li>
+                <li><strong>Mail/Fax option</strong> - Describe what you'll send if not uploading</li>
+              </ul>
+            </div>
+
             <fieldset>
-              <legend>Upload or List Documents</legend>
-              <p class="hint">You may upload recent pay stubs, a letter from your employer, or describe documents you will send by mail/fax. (Demo-only: uploads are not processed.)</p>
+              <legend>Upload or Describe Employment Documents</legend>
+              <div class="file-info">
+                <h4>Accepted File Types & Photo Options:</h4>
+                <div class="file-examples">
+                  <span><strong>Documents:</strong> PDF, DOC, DOCX</span>
+                  <span><strong>Images/Photos:</strong> JPG, JPEG, PNG, HEIC</span>
+                  <span><strong>Mobile Photos:</strong> You can take photos of pay stubs, letters, etc. with your phone</span>
+                  <span><strong>File Limit:</strong> Up to 10 files, 5MB each</span>
+                </div>
+              </div>
+
               <div class="grid cols-2">
                 <div>
                   <label for="docs">Upload files</label>
-                  <input id="docs" name="docs" type="file" multiple />
-                  <div class="hint">Accepted: PDF, JPG, PNG. Up to 10 files.</div>
+                  <input id="docs" name="docs" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.heic" aria-describedby="docsHelp" />
+                  <div id="docsHelp" class="hint">Select multiple files or take photos of documents. Demo only - files not actually processed.</div>
                 </div>
                 <div>
                   <label for="docDesc">If not uploading, describe what you'll provide</label>
-                  <textarea id="docDesc" name="docDesc" placeholder="e.g., 2 most recent pay stubs from ABC LLC; letter from HR confirming start date."></textarea>
+                  <textarea id="docDesc" name="docDesc" placeholder="Example: I will mail 2 recent pay stubs from ABC Company and an employment verification letter dated within the last 30 days. Mailing to: [agency address]" aria-describedby="docDescHelp"></textarea>
+                  <div id="docDescHelp" class="hint">Describe documents you'll send by mail, fax, or bring in person</div>
                 </div>
+              </div>
+
+              <div class="alert warning">
+                <strong>Helpful Document Examples:</strong>
+                <ul style="margin: 8px 0 0 20px;">
+                  <li>Recent pay stubs (last 2-4 pay periods)</li>
+                  <li>Letter from employer on company letterhead</li>
+                  <li>Bank statements showing direct deposits</li>
+                  <li>Tax forms (W-2, 1099, etc.)</li>
+                  <li>Self-employment: Business license, contracts, invoices</li>
+                </ul>
               </div>
             </fieldset>
 
@@ -378,18 +619,31 @@
 
           <!-- Step 5 -->
           <section id="panel5" class="panel" data-step="5" role="tabpanel" aria-labelledby="step5">
+            <div class="completion-guide">
+              <h3>Who Completes This Section?</h3>
+              <ul>
+                <li><strong>Applicant</strong> - Must provide your own consent and signature</li>
+                <li><strong>Authorized Representative</strong> - May sign if legally authorized</li>
+                <li><strong>Guardian/Conservator</strong> - May sign for incapacitated individuals</li>
+              </ul>
+            </div>
+
             <fieldset>
               <legend>Authorization & Signature</legend>
               <p class="hint">By signing, you agree that the Missouri Department of Social Services (DSS) may contact your employer and use the information provided to determine or renew your Medicaid eligibility.</p>
 
               <div class="grid cols-2">
                 <div>
-                  <label for="consent">Consent<span class="req">*</span></label>
-                  <select id="consent" name="consent" required>
+                  <label for="consent">
+                    <span class="definition">Consent<span class="tooltip">Consent means you give permission for Missouri Medicaid to contact your employer to verify the employment information you provided. This is required to process your application or renewal.</span></span>
+                    <span class="req">*</span>
+                  </label>
+                  <select id="consent" name="consent" required aria-describedby="consentHelp">
                     <option disabled selected value="">Please select</option>
                     <option value="yes">I consent to employer verification</option>
                     <option value="no">I do not consent</option>
                   </select>
+                  <div id="consentHelp" class="hint">Hover over "Consent" above for definition. Consent is required to process your application.</div>
                 </div>
                 <div>
                   <label for="signDate">Date<span class="req">*</span></label>
@@ -397,24 +651,31 @@
                 </div>
                 <div>
                   <label for="signature">Type your full legal name as signature<span class="req">*</span></label>
-                  <input id="signature" name="signature" type="text" required placeholder="Full name" />
+                  <input id="signature" name="signature" type="text" required placeholder="Full name" aria-describedby="signatureHelp" />
+                  <div id="signatureHelp" class="hint">Type your full legal name exactly as it appears on your ID</div>
                 </div>
                 <div>
                   <label for="relation">If signed by authorized representative</label>
-                  <input id="relation" name="relation" type="text" placeholder="Relationship to applicant" />
+                  <input id="relation" name="relation" type="text" placeholder="Relationship to applicant" aria-describedby="relationHelp" />
+                  <div id="relationHelp" class="hint">Example: Parent, Guardian, Power of Attorney, etc.</div>
                 </div>
               </div>
 
-              <div style="margin-top:8px; padding:12px; border:1px solid var(--border); border-radius:12px; background:#f8fafc;">
-                <strong>Privacy Notice:</strong>
-                <p class="hint" style="margin:.25rem 0 0">Your information is protected under state and federal privacy laws. Do not email documents containing SSNs unless instructed to use a secure method.</p>
+              <div class="alert error" id="noConsentWarning" style="display: none;">
+                <strong>Important:</strong> If you do not consent to employer verification, your Medicaid application cannot be processed. Employment verification is required by federal and state law to determine eligibility.
+              </div>
+
+              <div style="margin-top:16px; padding:16px; border:2px solid var(--border); border-radius:12px; background:#f8fafc;">
+                <strong>Privacy Notice & Translation Services:</strong>
+                <p class="hint" style="margin:.5rem 0">Your information is protected under state and federal privacy laws. Do not email documents containing Social Security Numbers unless instructed to use a secure method.</p>
+                <p class="hint" style="margin:.5rem 0 0"><strong>Language Services:</strong> Free interpretation and translation services are provided by Missouri Medicaid in Spanish, Somali, Vietnamese, Arabic, Bosnian, and other languages. Call (855) 373-4636 to request language assistance.</p>
               </div>
             </fieldset>
 
             <div class="actions">
               <label for="step4" class="btn ghost" role="button">← Back</label>
               <div class="row">
-                <button class="btn" type="button" onclick="window.print()">🖨️ Print</button>
+                <button class="btn" type="button" onclick="window.print()" aria-label="Print this form">🖨️ Print</button>
                 <button class="btn success" type="submit">Submit Verification</button>
               </div>
             </div>
@@ -422,7 +683,81 @@
         </form>
       </div>
     </section>
-    
+
+    <!-- Medicaid Employee Assistance Section -->
+    <section class="resources card" aria-label="Get personalized assistance">
+      <div class="header">
+        <div class="icon" aria-hidden="true" style="background:#e8f5ee; border-color:#c7ead6;">
+          <!-- user-heart icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="#16a34a" stroke-width="1.6" fill="none"/>
+            <circle cx="8.5" cy="7" r="4" stroke="#16a34a" stroke-width="1.6" fill="none"/>
+            <path d="M22 12s-2-2-4-2-4 2-4 2 2 2 4 2 4-2 4-2z" stroke="#16a34a" stroke-width="1.6" fill="none"/>
+          </svg>
+        </div>
+        <h2>Need Help? Connect with a Medicaid Navigator</h2>
+      </div>
+      <div style="padding: 16px; background: #f0fdf4; border-bottom: 2px solid var(--border);">
+        <p style="margin: 0 0 12px; color: var(--ink); font-weight: 600;">Our certified Medicaid employees are here to guide you through your healthcare journey.</p>
+        <p style="margin: 0; color: var(--ink-muted); font-size: 1rem;">Get personalized assistance with applications, renewals, coverage questions, and finding healthcare providers.</p>
+      </div>
+      <ul class="link-list">
+        <li class="link-item">
+          <span class="icon" aria-hidden="true" style="background:#e8f5ee; border-color:#c7ead6;">
+            <!-- phone icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="#16a34a" stroke-width="1.6" fill="none"/>
+            </svg>
+          </span>
+          <div class="link-meta">
+            <strong style="color: var(--accent); font-size: 1.1rem;">Call: (855) 373-4636</strong>
+            <span class="sub">Speak directly with a Medicaid Navigator</span>
+            <span class="sub" style="color: var(--accent); font-weight: 600;">Monday-Friday 8AM-5PM CT</span>
+          </div>
+        </li>
+
+        <li class="link-item">
+          <span class="icon" aria-hidden="true" style="background:#e8f5ee; border-color:#c7ead6;">
+            <!-- calendar icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="#16a34a" stroke-width="1.6" fill="none"/>
+              <line x1="16" y1="2" x2="16" y2="6" stroke="#16a34a" stroke-width="1.6"/>
+              <line x1="8" y1="2" x2="8" y2="6" stroke="#16a34a" stroke-width="1.6"/>
+              <line x1="3" y1="10" x2="21" y2="10" stroke="#16a34a" stroke-width="1.6"/>
+            </svg>
+          </span>
+          <div class="link-meta">
+            <a href="#" onclick="alert('This would open an appointment booking system in a real implementation.'); return false;" style="color: var(--accent);">
+              Schedule an Appointment
+              <span class="ext" aria-hidden="true">→</span>
+            </a>
+            <span class="sub">Book a one-on-one consultation (in-person or virtual)</span>
+          </div>
+        </li>
+
+        <li class="link-item">
+          <span class="icon" aria-hidden="true" style="background:#e8f5ee; border-color:#c7ead6;">
+            <!-- message-circle icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="#16a34a" stroke-width="1.6" fill="none"/>
+            </svg>
+          </span>
+          <div class="link-meta">
+            <a href="#" onclick="alert('This would open a secure chat system in a real implementation.'); return false;" style="color: var(--accent);">
+              Live Chat Support
+              <span class="ext" aria-hidden="true">→</span>
+            </a>
+            <span class="sub">Get instant help with your questions (Available 9AM-4PM CT)</span>
+          </div>
+        </li>
+      </ul>
+
+      <div style="padding: 16px; background: #fffbeb; border-top: 2px solid var(--border);">
+        <p style="margin: 0; font-size: 1rem; color: #92400e;">
+          <strong>Services Available in Multiple Languages:</strong> Spanish, Somali, Vietnamese, Arabic, Bosnian, and more. Interpretation services provided at no cost.
+        </p>
+      </div>
+    </section>
 
     <!-- Helpful Resources card -->
     <section class="resources card" aria-label="Helpful resources">
@@ -435,7 +770,7 @@
             <path d="M6 3a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h11" stroke="#1c4ed8" stroke-width="1.6" stroke-linecap="round"/>
           </svg>
         </div>
-        <h2>Helpful Resources</h2>
+        <h2>Additional Resources</h2>
       </div>
       <ul class="link-list">
         <li class="link-item">
@@ -520,11 +855,6 @@
       </ul>
     </section>
 
-    <!-- Existing note area (left intact) -->
-    <section class="container" style="max-width: 900px; margin: 18px auto 0;">
-      <div class="hint" role="note"></div>
-    </section>
-
   </main>
 
   <footer class="container" role="contentinfo">
@@ -532,96 +862,55 @@
   </footer>
 
   <script>
+    // Set current year
     document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
-  <!-- Medicaid Employee Assistance Section -->
-  <section class="resources card" aria-label="Get personalized assistance">
-    <div class="header">
-      <div class="icon" aria-hidden="true" style="background:#e8f5ee; border-color:#c7ead6;">
-        <!-- user-heart icon -->
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="#16a34a" stroke-width="1.6" fill="none"/>
-          <circle cx="8.5" cy="7" r="4" stroke="#16a34a" stroke-width="1.6" fill="none"/>
-          <path d="M22 12s-2-2-4-2-4 2-4 2 2 2 4 2 4-2 4-2z" stroke="#16a34a" stroke-width="1.6" fill="none"/>
-        </svg>
-      </div>
-      <h2>Need Help? Connect with a Medicaid Navigator</h2>
-    </div>
-    <div style="padding: 16px; background: #f0fdf4; border-bottom: 1px solid var(--border);">
-      <p style="margin: 0 0 12px; color: var(--ink); font-weight: 600;">Our certified Medicaid employees are here to guide you through your healthcare journey.</p>
-      <p style="margin: 0; color: var(--ink-muted); font-size: 0.95rem;">Get personalized assistance with applications, renewals, coverage questions, and finding healthcare providers.</p>
-    </div>
-    <ul class="link-list">
-      <li class="link-item">
-        <span class="icon" aria-hidden="true" style="background:#e8f5ee; border-color:#c7ead6;">
-          <!-- phone icon -->
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="#16a34a" stroke-width="1.6" fill="none"/>
-          </svg>
-        </span>
-        <div class="link-meta">
-          <strong style="color: var(--accent); font-size: 1.05rem;">Call: (855) 373-4636</strong>
-          <span class="sub">Speak directly with a Medicaid Navigator</span>
-          <span class="sub" style="color: var(--accent); font-weight: 600;">Monday-Friday 8AM-5PM CT</span>
-        </div>
-      </li>
-
-      <li class="link-item">
-        <span class="icon" aria-hidden="true" style="background:#e8f5ee; border-color:#c7ead6;">
-          <!-- calendar icon -->
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="#16a34a" stroke-width="1.6" fill="none"/>
-            <line x1="16" y1="2" x2="16" y2="6" stroke="#16a34a" stroke-width="1.6"/>
-            <line x1="8" y1="2" x2="8" y2="6" stroke="#16a34a" stroke-width="1.6"/>
-            <line x1="3" y1="10" x2="21" y2="10" stroke="#16a34a" stroke-width="1.6"/>
-          </svg>
-        </span>
-        <div class="link-meta">
-          <a href="#" onclick="alert('This would open an appointment booking system in a real implementation.'); return false;" style="color: var(--accent);">
-            Schedule an Appointment
-            <span class="ext" aria-hidden="true">→</span>
-          </a>
-          <span class="sub">Book a one-on-one consultation (in-person or virtual)</span>
-        </div>
-      </li>
-
-      <li class="link-item">
-        <span class="icon" aria-hidden="true" style="background:#e8f5ee; border-color:#c7ead6;">
-          <!-- message-circle icon -->
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="#16a34a" stroke-width="1.6" fill="none"/>
-          </svg>
-        </span>
-        <div class="link-meta">
-          <a href="#" onclick="alert('This would open a secure chat system in a real implementation.'); return false;" style="color: var(--accent);">
-            Live Chat Support
-            <span class="ext" aria-hidden="true">→</span>
-          </a>
-          <span class="sub">Get instant help with your questions (Available 9AM-4PM CT)</span>
-        </div>
-      </li>
-    </ul>
-
-    <div style="padding: 12px 16px; background: #fffbeb; border-top: 1px solid var(--border);">
-      <p style="margin: 0; font-size: 0.9rem; color: #92400e;">
-        <strong>Services Available in Multiple Languages:</strong> Spanish, Somali, Vietnamese, Arabic, and more. Interpretation services provided at no cost.
-      </p>
-    </div>
-  </section>
-
-  <!-- Helpful Resources card -->
-  <section class="resources card" aria-label="Helpful resources">
-    <div class="header">
-      <div class="icon" aria-hidden="true">
-        <!-- book icon -->
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 19a2 2 0 0 0 2 2h12" stroke="#1c4ed8" stroke-width="1.6" stroke-linecap="round"/>
-          <path d="M6 3h11a2 2 0 0 1 2 2v14" stroke="#1c4ed8" stroke-width="1.6" stroke-linecap="round"/>
-          <path d="M6 3a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h11" stroke="#1c4ed8" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <h2>Additional Resources</h2>
-    </div>
     
+    // Virtual magnifying glass functionality
+    document.getElementById('magnifier').addEventListener('click', function() {
+      document.body.classList.toggle('magnified');
+      this.textContent = document.body.classList.contains('magnified') ? '🔍−' : '🔍+';
+      this.title = document.body.classList.contains('magnified') ? 
+        'Reduce text size (currently magnified)' : 
+        'Magnify text for better visibility';
+    });
+    
+    // Consent warning functionality
+    document.getElementById('consent').addEventListener('change', function() {
+      const warning = document.getElementById('noConsentWarning');
+      if (this.value === 'no') {
+        warning.style.display = 'block';
+        warning.setAttribute('aria-live', 'polite');
+      } else {
+        warning.style.display = 'none';
+      }
+    });
+    
+    // Keyboard navigation for step chips
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.click();
+        }
+      });
+    });
+    
+    // Enhanced form validation with accessibility announcements
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const consent = document.getElementById('consent').value;
+      if (consent === 'no') {
+        alert('Your application cannot be processed without consent for employer verification. Please select "I consent to employer verification" to continue, or contact (855) 373-4636 for assistance.');
+        return;
+      }
+      
+      // In a real application, this would submit the form
+      alert('Form submitted successfully! You will receive a confirmation email if you provided an email address. Your reference number is: MO-' + Math.random().toString(36).substr(2, 9).toUpperCase());
+    });
+    
+    // Auto-set today's date in signature date field
+    document.getElementById('signDate').valueAsDate = new Date();
+  </script>
 </body>
 </html>
