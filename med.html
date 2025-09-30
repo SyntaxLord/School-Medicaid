@@ -197,35 +197,57 @@
     }
 
     /* Definition tooltips */
-    .definition {
-      position: relative;
-      display: inline-block;
-      border-bottom: 2px dotted var(--primary);
-      cursor: help;
-    }
-    
-    .definition .tooltip {
-      visibility: hidden;
-      width: 300px;
-      background-color: var(--ink);
-      color: #fff;
-      text-align: left;
-      border-radius: 6px;
-      padding: 12px;
-      position: absolute;
-      z-index: 1000;
-      bottom: 125%;
-      left: 50%;
-      margin-left: -150px;
-      font-size: 0.9rem;
-      line-height: 1.4;
-      box-shadow: var(--shadow);
-    }
-    
-    .definition:hover .tooltip,
-    .definition:focus .tooltip {
-      visibility: visible;
-    }
+.definition {
+  position: relative;
+  display: inline-block;
+  border-bottom: 2px dotted var(--primary);
+  cursor: help;
+}
+
+.definition .tooltip {
+  visibility: hidden;
+  width: 280px;
+  max-width: calc(100vw - 40px);
+  background-color: var(--ink);
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 12px;
+  position: absolute;
+  z-index: 1000;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.definition .tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 20px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent var(--ink) transparent;
+}
+
+.definition:hover .tooltip,
+.definition:focus .tooltip {
+  visibility: visible;
+}
+
+@media (max-width: 500px) {
+  .definition .tooltip {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .definition .tooltip::before {
+    left: 50%;
+    margin-left: -8px;
+  }
+}
 
     /* Alert styles */
     .alert {
@@ -634,15 +656,19 @@
 
               <div class="grid cols-2">
                 <div>
-                  <label for="consent">
-                    <span>Consent<span class="tooltip"></span></span>
-                    <span class="req">*</span>
-                  </label>
-                  <select id="consent" name="consent" required aria-describedby="consentHelp">
-                    <option disabled selected value="">Please select</option>
-                    <option value="yes">I consent to employer verification</option>
-                    <option value="no">I do not consent</option>
-                  </select>
+                  <div>
+                    <label for="consent">
+                      <span class="definition">Consent
+                        <span class="tooltip">      Consent means giving Missouri Medicaid permission to contact your employer</span>
+                      </span>
+                      <span class="req">*</span>
+                    </label>
+                    <select id="consent" name="consent" required aria-describedby="consentHelp">
+                      <option disabled selected value="">Please select</option>
+                      <option value="yes">I consent to employer verification</option>
+                      <option value="no">I do not consent</option>
+                    </select>
+                    <div id="consentHelp" class="hint">Your consent allows us to verify employment details with your employer</div>
                   <div>
                     
                   </div>
